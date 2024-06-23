@@ -6,46 +6,35 @@ import './App.css';
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadTasks();
   }, []);
 
   const loadTasks = async () => {
-    try {
-      const tasks = await getTasks();
-      setTasks(tasks);
-    } catch (error) {
-      console.error("Error loading tasks:", error);
-      setError("Failed to load tasks.");
-    }
+    const tasks = await getTasks();
+    setTasks(tasks);
   };
 
   const handleAddTask = async (task) => {
-    try {
-      await addTask(task);
-      loadTasks();
-    } catch (error) {
-      console.error("Error adding task:", error);
-      setError("Failed to add task.");
-    }
+    await addTask(task);
+    loadTasks();
   };
 
   const handleDeleteTask = async (id) => {
     try {
+      console.log(`Deleting task with ID: ${id}`);
       await deleteTask(id);
-      loadTasks();
+      console.log('Task deleted successfully');
+      loadTasks(); // Refresh tasks after deletion
     } catch (error) {
-      console.error("Error deleting task:", error);
-      setError("Failed to delete task.");
+      console.error('Error deleting task:', error);
     }
   };
 
   return (
     <div className="container">
       <h1>Task Manager</h1>
-      {error && <p className="error">{error}</p>}
       <AddTask onAddTask={handleAddTask} />
       <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} />
     </div>

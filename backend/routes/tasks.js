@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const tasks = await Task.find();
         res.json(tasks);
     } catch (err) {
-        console.error('Error fetching tasks:', err.message);
+        console.error(err);  // Add logging here
         res.status(500).json({ message: err.message });
     }
 });
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
         const newTask = await task.save();
         res.status(201).json(newTask);
     } catch (err) {
-        console.error('Error creating task:', err.message);
+        console.error(err);  // Add logging here
         res.status(400).json({ message: err.message });
     }
 });
@@ -50,20 +50,18 @@ router.put('/:id', getTask, async (req, res) => {
         const updatedTask = await res.task.save();
         res.json(updatedTask);
     } catch (err) {
-        console.error('Error updating task:', err.message);
+        console.error(err);  // Add logging here
         res.status(400).json({ message: err.message });
     }
 });
 
 // Delete a task
 router.delete('/:id', getTask, async (req, res) => {
-    console.log(`Deleting task with ID: ${req.params.id}`);
     try {
-        await res.task.remove();
-        console.log('Task deleted successfully');
+        await res.task.deleteOne(); // Use deleteOne() instead of remove()
         res.json({ message: 'Deleted Task' });
     } catch (err) {
-        console.error('Error deleting task:', err.message);
+        console.error(err);  // Add logging here
         res.status(500).json({ message: err.message });
     }
 });
@@ -74,11 +72,10 @@ async function getTask(req, res, next) {
     try {
         task = await Task.findById(req.params.id);
         if (task == null) {
-            console.error('Task not found');
             return res.status(404).json({ message: 'Cannot find task' });
         }
     } catch (err) {
-        console.error('Error fetching task:', err.message);
+        console.error(err);  // Add logging here
         return res.status(500).json({ message: err.message });
     }
     res.task = task;
